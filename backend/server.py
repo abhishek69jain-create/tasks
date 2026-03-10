@@ -32,6 +32,9 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key-change-in-production"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
+# Invite code for team registration (optional - set to enable invite-only registration)
+INVITE_CODE = os.environ.get("INVITE_CODE", None)  # Set in .env to enable
+
 # Security
 security = HTTPBearer()
 
@@ -266,8 +269,18 @@ async def register(user_data: UserCreate):
             detail="Email already registered"
         )
     
-    # Check if this is the first user (will be admin)
+    # Check invite code if enabled
     user_count = await db.users.count_documents({})
+    if user_count > 0 and INVITE_CODE:
+        # After first user, require invite code if set
+        invite = user_data.dict().get("invite_code")
+        if invite != INVITE_CODE:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Invalid invite code"
+            )
+    
+    # Check if this is the first user (will be admin)
     role = UserRole.ADMIN if user_count == 0 else UserRole.TEAM_MEMBER
     
     # Create user
