@@ -21,8 +21,10 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showInviteCode, setShowInviteCode] = useState(false);
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -42,13 +44,20 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      await register(email.trim(), password, name.trim());
+      await register(email.trim(), password, name.trim(), inviteCode.trim() || undefined);
       router.replace('/(tabs)');
     } catch (error: any) {
-      Alert.alert(
-        'Registration Failed',
-        error.response?.data?.detail || 'Something went wrong'
-      );
+      const errorMsg = error.response?.data?.detail || 'Something went wrong';
+      if (errorMsg.includes('invite code')) {
+        Alert.alert('Invite Code Required', errorMsg);
+        setShowInviteCode(true);
+      } else {
+        Alert.alert('Registration Failed', errorMsg);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
     } finally {
       setLoading(false);
     }
@@ -123,6 +132,28 @@ export default function RegisterScreen() {
               autoCapitalize="none"
             />
           </View>
+
+          {showInviteCode && (
+            <View style={styles.inputContainer}>
+              <Ionicons name="key-outline" size={20} color="#64748B" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Invite Code (optional)"
+                value={inviteCode}
+                onChangeText={setInviteCode}
+                autoCapitalize="characters"
+              />
+            </View>
+          )}
+
+          <TouchableOpacity
+            style={styles.linkButton}
+            onPress={() => setShowInviteCode(!showInviteCode)}
+          >
+            <Text style={styles.linkButtonText}>
+              {showInviteCode ? 'Hide invite code field' : 'Have an invite code?'}
+            </Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
@@ -229,5 +260,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#3B82F6',
     fontWeight: '600',
+  },
+  linkButton: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  linkButtonText: {
+    fontSize: 13,
+    color: '#64748B',
+    textDecorationLine: 'underline',
   },
 });

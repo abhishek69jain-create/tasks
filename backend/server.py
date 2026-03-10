@@ -108,6 +108,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     name: str
+    invite_code: Optional[str] = None  # Optional invite code for protected registration
 
 
 class UserLogin(BaseModel):
@@ -269,18 +270,17 @@ async def register(user_data: UserCreate):
             detail="Email already registered"
         )
     
-    # Check invite code if enabled
+    # Check invite code if enabled (only after first user is created)
     user_count = await db.users.count_documents({})
     if user_count > 0 and INVITE_CODE:
-        # After first user, require invite code if set
-        invite = user_data.dict().get("invite_code")
-        if invite != INVITE_CODE:
+        # If INVITE_CODE is set in .env, require it for all registrations after first user
+        if not user_data.invite_code or user_data.invite_code != INVITE_CODE:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Invalid invite code"
+                detail="Invalid or missing invite code"
             )
     
-    # Check if this is the first user (will be admin)
+    # First user becomes admin, rest are team members
     role = UserRole.ADMIN if user_count == 0 else UserRole.TEAM_MEMBER
     
     # Create user

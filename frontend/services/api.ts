@@ -29,8 +29,12 @@ export const authService = {
     const response = await api.post('/auth/login', { email, password });
     return response.data;
   },
-  register: async (email: string, password: string, name: string) => {
-    const response = await api.post('/auth/register', { email, password, name });
+  register: async (email: string, password: string, name: string, inviteCode?: string) => {
+    const payload: any = { email, password, name };
+    if (inviteCode) {
+      payload.invite_code = inviteCode;
+    }
+    const response = await api.post('/auth/register', payload);
     return response.data;
   },
   getMe: async () => {
