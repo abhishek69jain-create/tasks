@@ -58,10 +58,6 @@ export default function RegisterScreen() {
       setLoading(false);
     }
   };
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <KeyboardAvoidingView

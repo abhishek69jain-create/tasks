@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow HTTPS connections to Emergent preview domain -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">emergentagent.com</domain>
+        <domain includeSubdomains="true">preview.emergentagent.com</domain>
+        <domain includeSubdomains="true">quick-assign-1.preview.emergentagent.com</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+    
+    <!-- Base config: No cleartext traffic allowed -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
