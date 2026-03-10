@@ -17,7 +17,8 @@
         "backgroundColor": "#000"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.quickassign.app"
+      "package": "com.quickassign.app",
+      "usesCleartextTraffic": true
     },
     "web": {
       "bundler": "metro",
@@ -35,16 +36,7 @@
           "backgroundColor": "#000"
         }
       ],
-      "@react-native-community/datetimepicker",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "usesCleartextTraffic": false,
-            "networkSecurityConfig": "./network_security_config.xml"
-          }
-        }
-      ]
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true
