@@ -1,7 +1,8 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL + '/api';
+const API_URL = Constants.expoConfig?.extra?.backendUrl + '/api' || 'https://quick-assign-1.preview.emergentagent.com/api';
 
 const api = axios.create({
   baseURL: API_URL,
