@@ -43,6 +43,9 @@ module.exports = {
     },
     extra: {
       backendUrl: process.env.EXPO_PUBLIC_BACKEND_URL || "https://quick-assign-1.preview.emergentagent.com",
+    eas:   {
+    projectId: "0604dda4-805c-413c-9ecb-11adac71a219",
+     },
     },
   },
 };
